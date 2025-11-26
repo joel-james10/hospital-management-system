@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Find Doctors{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        {% include 'patient/_sidebar.html' %}
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i class="bi bi-search"></i> Find Doctors</h1>
+            </div>
+
+            <!-- Specialization Filter -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('patient.find_doctors') }}">
+                        <div class="row align-items-end">
+                            <div class="col-md-8">
+                                <label for="specialization" class="form-label">Filter by Specialization</label>
+                                <select class="form-select" id="specialization" name="specialization">
+                                    <option value="">All Specializations</option>
+                                    {% for dept in departments %}
+                                    <option value="{{ dept.id }}"
+                                            {% if selected_specialization == dept.id %}selected{% endif %}>
+                                        {{ dept.department_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-funnel"></i> Filter
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Doctors List -->
+            {% if doctors %}
+                <div class="row g-4">
+                    {% for doctor in doctors %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-person-badge text-primary"></i>
+                                    {{ doctor.name }}
+                                </h5>
+                                <p class="card-text">
+                                    <strong>Specialization:</strong><br>
+                                    <span class="badge bg-info">{{ doctor.specialization }}</span>
+                                </p>
+                                {% if doctor.contact %}
+                                <p class="card-text text-muted small">
+                                    <i class="bi bi-telephone"></i> {{ doctor.contact }}
+                                </p>
+                                {% endif %}
+                                <p class="card-text text-muted small">
+                                    <i class="bi bi-envelope"></i> {{ doctor.email }}
+                                </p>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <div class="d-grid gap-2">
+                                    <a href="{{ url_for('patient.view_doctor', doctor_id=doctor.id) }}"
+                                       class="btn btn-outline-primary">
+                                        <i class="bi bi-eye"></i> View Profile
+                                    </a>
+                                    <a href="{{ url_for('patient.book_appointment', doctor_id=doctor.id) }}"
+                                       class="btn btn-primary">
+                                        <i class="bi bi-calendar-plus"></i> Book Appointment
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-search" style="font-size: 3rem; color: #ccc;"></i>
+                        <p class="text-muted mt-3">
+                            {% if selected_specialization %}
+                                No doctors found for the selected specialization.
+                            {% else %}
+                                No doctors available at the moment.
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+</div>
+{% endblock %}

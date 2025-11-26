@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Profile{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        {% include 'patient/_sidebar.html' %}
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i class="bi bi-person-badge"></i> Doctor Profile</h1>
+                <div class="btn-toolbar">
+                    <a href="{{ url_for('patient.find_doctors') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Search
+                    </a>
+                </div>
+            </div>
+
+            <!-- Doctor Information -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="bi bi-info-circle"></i> Doctor Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="mb-3">{{ doctor.name }}</h4>
+                            <table class="table table-borderless mb-0">
+                                <tr>
+                                    <th width="40%">Specialization:</th>
+                                    <td><span class="badge bg-info">{{ doctor.specialization }}</span></td>
+                                </tr>
+                                <tr>
+                                    <th>Email:</th>
+                                    <td>{{ doctor.email }}</td>
+                                </tr>
+                                {% if doctor.contact %}
+                                <tr>
+                                    <th>Contact:</th>
+                                    <td>{{ doctor.contact }}</td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                            <div class="d-grid mt-4">
+                                <a href="{{ url_for('patient.book_appointment', doctor_id=doctor.id) }}"
+                                   class="btn btn-primary btn-lg">
+                                    <i class="bi bi-calendar-plus"></i> Book Appointment
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Availability Schedule -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="bi bi-clock"></i> Weekly Availability</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if availability %}
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Day</th>
+                                            <th>Available Hours</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+                                        {% for day in days %}
+                                        <tr>
+                                            <td><strong>{{ day }}</strong></td>
+                                            <td>
+                                                {% set day_availability = availability | selectattr('day_of_week', 'equalto', day) | first %}
+                                                {% if day_availability %}
+                                                    <span class="badge bg-success">
+                                                        {{ day_availability.start_time.strftime('%I:%M %p') }} -
+                                                        {{ day_availability.end_time.strftime('%I:%M %p') }}
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">Not Available</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p class="text-muted mb-0">Doctor has not set availability schedule yet.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Information -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Booking Information</h6>
+                        <ul class="mb-0">
+                            <li>Appointments are available in 1-hour time slots</li>
+                            <li>Please book appointments during the doctor's available hours shown above</li>
+                            <li>You can cancel appointments before they are completed</li>
+                            <li>Completed appointments cannot be cancelled</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}

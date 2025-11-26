@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Book Appointment{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        {% include 'patient/_sidebar.html' %}
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i class="bi bi-calendar-plus"></i> Book Appointment</h1>
+                <div class="btn-toolbar">
+                    <a href="{{ url_for('patient.view_doctor', doctor_id=doctor.id) }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back
+                    </a>
+                </div>
+            </div>
+
+            <!-- Doctor Summary -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <h6 class="mb-2"><i class="bi bi-person-badge"></i> Booking with Dr. {{ doctor.name }}</h6>
+                        <p class="mb-0"><strong>Specialization:</strong> {{ doctor.specialization }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Booking Form -->
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Select Date and Time</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ url_for('patient.book_appointment', doctor_id=doctor.id) }}">
+                                <div class="mb-3">
+                                    <label for="date" class="form-label">
+                                        Appointment Date <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="date" class="form-control" id="date" name="date" required
+                                           min="{{ (now().date() + timedelta(days=1)).strftime('%Y-%m-%d') }}">
+                                    <div class="form-text">Select a date (must be at least 1 day in advance)</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="time" class="form-label">
+                                        Appointment Time <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select" id="time" name="time" required>
+                                        <option value="">Select a time slot</option>
+                                        {% for hour in range(8, 20) %}
+                                        <option value="{{ '%02d:00' % hour }}">{{ '%02d:00' % hour }} ({{ '%02d:00' % hour | datetime_format }})</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="form-text">Available slots: 8:00 AM - 8:00 PM (1-hour slots)</div>
+                                </div>
+
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    <strong>Important:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li>Please ensure the selected time falls within the doctor's availability</li>
+                                        <li>If a time slot is already booked, you will be notified to select another time</li>
+                                        <li>Appointments cannot be booked for past dates</li>
+                                    </ul>
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="{{ url_for('patient.view_doctor', doctor_id=doctor.id) }}"
+                                       class="btn btn-secondary">
+                                        <i class="bi bi-x-circle"></i> Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check-circle"></i> Book Appointment
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Doctor Availability Reference -->
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="bi bi-clock"></i> Doctor's Availability</h6>
+                        </div>
+                        <div class="card-body">
+                            {% if availability %}
+                                <table class="table table-sm table-striped mb-0">
+                                    <tbody>
+                                        {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+                                        {% for day in days %}
+                                        {% set day_availability = availability | selectattr('day_of_week', 'equalto', day) | first %}
+                                        {% if day_availability %}
+                                        <tr>
+                                            <td><strong>{{ day[:3] }}</strong></td>
+                                            <td class="small">
+                                                {{ day_availability.start_time.strftime('%I:%M %p') }} -
+                                                {{ day_availability.end_time.strftime('%I:%M %p') }}
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p class="text-muted small mb-0">No availability schedule set</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="bi bi-lightbulb"></i> Tips</h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="small mb-0">
+                                <li>Book in advance for better availability</li>
+                                <li>Arrive 10 minutes before your appointment</li>
+                                <li>Bring any relevant medical records</li>
+                                <li>You can cancel appointments if needed</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+// Helper function to format time
+function formatTime(time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours % 12 || 12;
+    return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+}
+</script>
+{% endblock %}

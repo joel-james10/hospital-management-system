@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}My Appointments{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        {% include 'patient/_sidebar.html' %}
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i class="bi bi-calendar-check"></i> My Appointments</h1>
+                <div class="btn-toolbar">
+                    <a href="{{ url_for('patient.find_doctors') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Book New Appointment
+                    </a>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <ul class="nav nav-tabs mb-4">
+                <li class="nav-item">
+                    <a class="nav-link {% if status_filter == 'all' %}active{% endif %}"
+                       href="{{ url_for('patient.appointments', status='all') }}">
+                        All
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if status_filter == 'Booked' %}active{% endif %}"
+                       href="{{ url_for('patient.appointments', status='Booked') }}">
+                        Upcoming
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if status_filter == 'Completed' %}active{% endif %}"
+                       href="{{ url_for('patient.appointments', status='Completed') }}">
+                        Completed
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if status_filter == 'Cancelled' %}active{% endif %}"
+                       href="{{ url_for('patient.appointments', status='Cancelled') }}">
+                        Cancelled
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Appointments List -->
+            <div class="card">
+                <div class="card-body">
+                    {% if appointments %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Doctor</th>
+                                        <th>Specialization</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for apt in appointments %}
+                                    <tr>
+                                        <td><i class="bi bi-calendar"></i> {{ apt.date }}</td>
+                                        <td><i class="bi bi-clock"></i> {{ apt.time.strftime('%I:%M %p') }}</td>
+                                        <td><i class="bi bi-person-badge"></i> Dr. {{ apt.doctor.name }}</td>
+                                        <td><span class="badge bg-info">{{ apt.doctor.specialization }}</span></td>
+                                        <td>
+                                            {% if apt.status == 'Booked' %}
+                                                <span class="badge bg-warning">{{ apt.status }}</span>
+                                            {% elif apt.status == 'Completed' %}
+                                                <span class="badge bg-success">{{ apt.status }}</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ apt.status }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if apt.status == 'Booked' %}
+                                            <a href="{{ url_for('patient.cancel_appointment', id=apt.id) }}"
+                                               class="btn btn-sm btn-danger"
+                                               onclick="return confirm('Are you sure you want to cancel this appointment?')">
+                                                <i class="bi bi-x-circle"></i> Cancel
+                                            </a>
+                                            {% elif apt.status == 'Completed' %}
+                                            <a href="{{ url_for('patient.medical_history') }}"
+                                               class="btn btn-sm btn-primary">
+                                                <i class="bi bi-file-medical"></i> View Treatment
+                                            </a>
+                                            {% else %}
+                                            <span class="text-muted small">No actions available</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-calendar-x" style="font-size: 3rem; color: #ccc;"></i>
+                            <p class="text-muted mt-3">
+                                {% if status_filter == 'all' %}
+                                    You haven't booked any appointments yet.
+                                {% elif status_filter == 'Booked' %}
+                                    You have no upcoming appointments.
+                                {% elif status_filter == 'Completed' %}
+                                    You have no completed appointments.
+                                {% else %}
+                                    You have no cancelled appointments.
+                                {% endif %}
+                            </p>
+                            <a href="{{ url_for('patient.find_doctors') }}" class="btn btn-primary mt-2">
+                                <i class="bi bi-search"></i> Find Doctors to Book Appointment
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}

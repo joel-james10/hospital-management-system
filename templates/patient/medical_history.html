@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Medical History{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        {% include 'patient/_sidebar.html' %}
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i class="bi bi-file-medical"></i> My Medical History</h1>
+            </div>
+
+            <!-- Appointment History Summary -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <h6 class="card-title text-uppercase">Total Appointments</h6>
+                            <h2 class="mb-0">{{ appointments | length }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <h6 class="card-title text-uppercase">Completed</h6>
+                            <h2 class="mb-0">{{ appointments | selectattr('status', 'equalto', 'Completed') | list | length }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-info">
+                        <div class="card-body">
+                            <h6 class="card-title text-uppercase">Treatment Records</h6>
+                            <h2 class="mb-0">{{ treatments | length }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Treatment History -->
+            {% if treatments %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="bi bi-prescription2"></i> Treatment History</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for treatment in treatments %}
+                            <div class="card mb-3 border-start border-primary border-4">
+                                <div class="card-header bg-light">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <h6 class="mb-0">
+                                                <i class="bi bi-person-badge"></i> Dr. {{ treatment.appointment.doctor.name }}
+                                            </h6>
+                                            <small class="text-muted">{{ treatment.appointment.doctor.specialization }}</small>
+                                        </div>
+                                        <div class="col-md-6 text-md-end">
+                                            <small class="text-muted">
+                                                <i class="bi bi-calendar"></i> {{ treatment.appointment.date }}
+                                                <i class="bi bi-clock ms-2"></i> {{ treatment.appointment.time.strftime('%I:%M %p') }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <h6 class="text-primary">
+                                            <i class="bi bi-clipboard2-pulse"></i> Diagnosis
+                                        </h6>
+                                        <p class="mb-0">{{ treatment.diagnosis }}</p>
+                                    </div>
+
+                                    {% if treatment.prescription %}
+                                    <div class="mb-3">
+                                        <h6 class="text-success">
+                                            <i class="bi bi-prescription2"></i> Prescription
+                                        </h6>
+                                        <p class="mb-0">{{ treatment.prescription }}</p>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if treatment.notes %}
+                                    <div class="mb-0">
+                                        <h6 class="text-info">
+                                            <i class="bi bi-sticky"></i> Doctor's Notes
+                                        </h6>
+                                        <p class="mb-0">{{ treatment.notes }}</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="card-footer bg-transparent text-muted small">
+                                    <i class="bi bi-clock-history"></i> Recorded on: {{ treatment.created_at.strftime('%Y-%m-%d %I:%M %p') }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card mb-4">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-prescription2" style="font-size: 3rem; color: #ccc;"></i>
+                    <p class="text-muted mt-3">No treatment records available yet.</p>
+                    <p class="text-muted">Your treatment records will appear here after completed appointments.</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- All Appointments History -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="bi bi-calendar-check"></i> All Appointments</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if appointments %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Time</th>
+                                                <th>Doctor</th>
+                                                <th>Specialization</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for apt in appointments %}
+                                            <tr>
+                                                <td><i class="bi bi-calendar"></i> {{ apt.date }}</td>
+                                                <td><i class="bi bi-clock"></i> {{ apt.time.strftime('%I:%M %p') }}</td>
+                                                <td><i class="bi bi-person-badge"></i> Dr. {{ apt.doctor.name }}</td>
+                                                <td><span class="badge bg-info">{{ apt.doctor.specialization }}</span></td>
+                                                <td>
+                                                    {% if apt.status == 'Booked' %}
+                                                        <span class="badge bg-warning">{{ apt.status }}</span>
+                                                    {% elif apt.status == 'Completed' %}
+                                                        <span class="badge bg-success">{{ apt.status }}</span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary">{{ apt.status }}</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <p class="text-muted mb-0">No appointments found.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}
