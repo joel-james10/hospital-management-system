@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Manage Patients{% endblock %}
+{% block content %}
+<div class="container-fluid"><div class="row">{% include 'admin/_sidebar.html' %}
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+<h1 class="h2 pt-3 pb-2 mb-3 border-bottom"><i class="bi bi-people"></i> Manage Patients</h1>
+{% if patients %}<table class="table table-striped"><thead><tr><th>Name</th><th>Email</th><th>Contact</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+{% for patient in patients %}<tr><td>{{ patient.name }}</td><td>{{ patient.email }}</td><td>{{ patient.contact or 'N/A' }}</td>
+<td>{% if patient.is_blacklisted %}<span class="badge bg-danger">Blacklisted</span>{% else %}<span class="badge bg-success">Active</span>{% endif %}</td>
+<td><a href="{{ url_for('admin.toggle_blacklist_patient', id=patient.id) }}" class="btn btn-sm btn-outline-warning">
+{% if patient.is_blacklisted %}Activate{% else %}Blacklist{% endif %}</a></td></tr>{% endfor %}</tbody></table>
+{% else %}<div class="alert alert-info">No patients found.</div>{% endif %}</main></div></div>
+{% endblock %}

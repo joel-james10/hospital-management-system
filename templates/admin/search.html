@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<div class="container-fluid"><div class="row">{% include 'admin/_sidebar.html' %}
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+<h1 class="h2 pt-3 pb-2 mb-3 border-bottom"><i class="bi bi-search"></i> Search</h1>
+<div class="card mb-4"><div class="card-body"><form method="POST">
+<div class="row"><div class="col-md-3"><select class="form-select" name="search_type" required>
+<option value="patient">Patient</option><option value="doctor">Doctor</option></select></div>
+<div class="col-md-7"><input type="text" class="form-control" name="query" placeholder="Search..." required></div>
+<div class="col-md-2"><button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Search</button></div>
+</div></form></div></div>
+{% if results is not none %}
+<h5>Results ({{ results|length }})</h5>
+{% if results %}<table class="table table-striped"><thead><tr>
+{% if search_type == 'patient' %}<th>Name</th><th>Email</th><th>Contact</th>
+{% else %}<th>Name</th><th>Email</th><th>Specialization</th>{% endif %}</tr></thead><tbody>
+{% for item in results %}<tr><td>{{ item.name }}</td><td>{{ item.email }}</td>
+<td>{% if search_type == 'patient' %}{{ item.contact }}{% else %}{{ item.specialization }}{% endif %}</td></tr>{% endfor %}
+</tbody></table>{% else %}<div class="alert alert-warning">No results found.</div>{% endif %}
+{% endif %}</main></div></div>
+{% endblock %}
