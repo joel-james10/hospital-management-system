@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Availability{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        {% include 'doctor/_sidebar.html' %}
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i class="bi bi-clock"></i> Manage Availability</h1>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                <strong>Note:</strong> Set your weekly availability schedule. Patients can only book appointments during your available time slots (8:00 AM - 8:00 PM in 1-hour increments).
+            </div>
+
+            <!-- Availability Form -->
+            <form method="POST" action="{{ url_for('doctor.manage_availability') }}">
+                <div class="row">
+                    {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+                    {% for day in days %}
+                    <div class="col-12 mb-4">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                           id="{{ day }}_available" name="{{ day }}_available"
+                                           {% if availability.get(day) %}checked{% endif %}
+                                           onchange="toggleDay('{{ day }}')">
+                                    <label class="form-check-label fw-bold" for="{{ day }}_available">
+                                        {{ day }}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="card-body" id="{{ day }}_times"
+                                 {% if not availability.get(day) %}style="display:none;"{% endif %}>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="{{ day }}_start" class="form-label">Start Time</label>
+                                        <input type="time" class="form-control" id="{{ day }}_start"
+                                               name="{{ day }}_start"
+                                               value="{% if availability.get(day) %}{{ availability[day].start_time.strftime('%H:%M') }}{% else %}08:00{% endif %}"
+                                               min="08:00" max="20:00" step="3600">
+                                        <div class="form-text">Available from 8:00 AM to 8:00 PM</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="{{ day }}_end" class="form-label">End Time</label>
+                                        <input type="time" class="form-control" id="{{ day }}_end"
+                                               name="{{ day }}_end"
+                                               value="{% if availability.get(day) %}{{ availability[day].end_time.strftime('%H:%M') }}{% else %}17:00{% endif %}"
+                                               min="08:00" max="20:00" step="3600">
+                                        <div class="form-text">Available from 8:00 AM to 8:00 PM</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-4">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-save"></i> Save Availability
+                    </button>
+                </div>
+            </form>
+
+            <!-- Current Schedule Summary -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-calendar-week"></i> Current Schedule Summary</h5>
+                </div>
+                <div class="card-body">
+                    {% if availability %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Day</th>
+                                        <th>Available Hours</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for day in days %}
+                                    <tr>
+                                        <td><strong>{{ day }}</strong></td>
+                                        <td>
+                                            {% if availability.get(day) %}
+                                                <span class="badge bg-success">
+                                                    {{ availability[day].start_time.strftime('%I:%M %p') }} -
+                                                    {{ availability[day].end_time.strftime('%I:%M %p') }}
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Not Available</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No availability schedule set. Please configure your working hours above.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+function toggleDay(day) {
+    const checkbox = document.getElementById(day + '_available');
+    const timesDiv = document.getElementById(day + '_times');
+
+    if (checkbox.checked) {
+        timesDiv.style.display = 'block';
+    } else {
+        timesDiv.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

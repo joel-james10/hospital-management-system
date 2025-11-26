@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}My Patients{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        {% include 'doctor/_sidebar.html' %}
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i class="bi bi-people"></i> My Patients</h1>
+            </div>
+
+            <!-- Patients List -->
+            <div class="card">
+                <div class="card-body">
+                    {% if patients %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Patient ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Contact</th>
+                                        <th>Date of Birth</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for patient in patients %}
+                                    <tr>
+                                        <td>#{{ patient.id }}</td>
+                                        <td><i class="bi bi-person"></i> {{ patient.name }}</td>
+                                        <td>{{ patient.email }}</td>
+                                        <td>{{ patient.contact or 'N/A' }}</td>
+                                        <td>{{ patient.date_of_birth or 'N/A' }}</td>
+                                        <td>
+                                            <a href="{{ url_for('doctor.patient_history', patient_id=patient.id) }}"
+                                               class="btn btn-sm btn-primary">
+                                                <i class="bi bi-file-medical"></i> View History
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-people" style="font-size: 3rem; color: #ccc;"></i>
+                            <p class="text-muted mt-3">You haven't seen any patients yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}
