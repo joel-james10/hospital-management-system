@@ -18,22 +18,22 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ url_for('admin.doctors') }}">
                             <i class="bi bi-people"></i> Manage Doctors
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ url_for('admin.patients') }}">
                             <i class="bi bi-person"></i> Manage Patients
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ url_for('admin.appointments') }}">
                             <i class="bi bi-calendar-check"></i> Appointments
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ url_for('admin.search') }}">
                             <i class="bi bi-search"></i> Search
                         </a>
                     </li>
@@ -115,14 +115,14 @@
                         </div>
                         <div class="card-body">
                             <div class="d-grid gap-2 d-md-flex">
-                                <a href="#" class="btn btn-primary">
+                                <a href="{{ url_for('admin.add_doctor') }}" class="btn btn-primary">
                                     <i class="bi bi-person-plus"></i> Add Doctor
                                 </a>
-                                <a href="#" class="btn btn-outline-primary">
+                                <a href="{{ url_for('admin.appointments') }}" class="btn btn-outline-primary">
                                     <i class="bi bi-calendar-check"></i> View All Appointments
                                 </a>
-                                <a href="#" class="btn btn-outline-primary">
-                                    <i class="bi bi-search"></i> Search Patients
+                                <a href="{{ url_for('admin.search') }}" class="btn btn-outline-primary">
+                                    <i class="bi bi-search"></i> Search
                                 </a>
                             </div>
                         </div>
