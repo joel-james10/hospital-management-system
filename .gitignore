@@ -9,6 +9,7 @@ __pycache__/
 
 # Database
 *.db
+instance/
 
 # Environment variables (confidential)
 .env

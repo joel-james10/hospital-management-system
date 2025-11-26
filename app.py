@@ -1,32 +1,30 @@
 from flask import Flask, render_template, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
-from flask_mail import Mail
 from config import Config
+from extensions import db, login_manager, mail
 
 # Initialize Flask app
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Initialize extensions
-db = SQLAlchemy(app)
-login_manager = LoginManager(app)
+# Initialize extensions with app
+db.init_app(app)
+login_manager.init_app(app)
 login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Please log in to access this page.'
-mail = Mail(app)
+mail.init_app(app)
 
 # Import models (will be created later)
 # This import must come after db initialization
 from models import admin, doctor, patient, department, appointment, treatment
 
-# Import routes
-from routes import auth, admin as admin_routes, doctor as doctor_routes, patient as patient_routes
+# Import routes (temporarily commented out until routes are created)
+# from routes import auth, admin as admin_routes, doctor as doctor_routes, patient as patient_routes
 
-# Register blueprints
-app.register_blueprint(auth.bp)
-app.register_blueprint(admin_routes.bp)
-app.register_blueprint(doctor_routes.bp)
-app.register_blueprint(patient_routes.bp)
+# Register blueprints (temporarily commented out)
+# app.register_blueprint(auth.bp)
+# app.register_blueprint(admin_routes.bp)
+# app.register_blueprint(doctor_routes.bp)
+# app.register_blueprint(patient_routes.bp)
 
 # User loader for Flask-Login
 @login_manager.user_loader
@@ -51,7 +49,8 @@ def load_user(user_id):
 @app.route('/')
 def index():
     """Home page - redirect to login"""
-    return redirect(url_for('auth.login'))
+    # Temporarily return a simple message until routes are created
+    return "Hospital Management System - Database Initialized!"
 
 # Error handlers
 @app.errorhandler(404)
