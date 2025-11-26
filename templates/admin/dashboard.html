@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky pt-3">
+                <h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted">
+                    <span>Admin Menu</span>
+                </h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('admin.dashboard') }}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-people"></i> Manage Doctors
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-person"></i> Manage Patients
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-calendar-check"></i> Appointments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-search"></i> Search
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i class="bi bi-speedometer2"></i> Admin Dashboard</h1>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title text-uppercase mb-0">Total Doctors</h6>
+                                    <h2 class="mb-0">{{ stats.doctors }}</h2>
+                                </div>
+                                <i class="bi bi-people" style="font-size: 3rem; opacity: 0.5;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title text-uppercase mb-0">Total Patients</h6>
+                                    <h2 class="mb-0">{{ stats.patients }}</h2>
+                                </div>
+                                <i class="bi bi-person" style="font-size: 3rem; opacity: 0.5;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card text-white bg-info">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title text-uppercase mb-0">Appointments</h6>
+                                    <h2 class="mb-0">{{ stats.appointments }}</h2>
+                                </div>
+                                <i class="bi bi-calendar-check" style="font-size: 3rem; opacity: 0.5;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title text-uppercase mb-0">Pending</h6>
+                                    <h2 class="mb-0">{{ stats.pending }}</h2>
+                                </div>
+                                <i class="bi bi-clock" style="font-size: 3rem; opacity: 0.5;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2 d-md-flex">
+                                <a href="#" class="btn btn-primary">
+                                    <i class="bi bi-person-plus"></i> Add Doctor
+                                </a>
+                                <a href="#" class="btn btn-outline-primary">
+                                    <i class="bi bi-calendar-check"></i> View All Appointments
+                                </a>
+                                <a href="#" class="btn btn-outline-primary">
+                                    <i class="bi bi-search"></i> Search Patients
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .sidebar {
+        position: fixed;
+        top: 56px;
+        bottom: 0;
+        left: 0;
+        z-index: 100;
+        padding: 0;
+        box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    }
+
+    .sidebar .nav-link {
+        font-weight: 500;
+        color: #333;
+        padding: 0.75rem 1rem;
+    }
+
+    .sidebar .nav-link:hover {
+        color: var(--primary-color);
+        background-color: rgba(0, 0, 0, .05);
+    }
+
+    .sidebar .nav-link.active {
+        color: var(--primary-color);
+        background-color: rgba(13, 110, 253, .1);
+    }
+
+    .sidebar-heading {
+        font-size: .75rem;
+        text-transform: uppercase;
+    }
+
+    @media (max-width: 767.98px) {
+        .sidebar {
+            position: relative;
+            top: 0;
+        }
+    }
+</style>
+{% endblock %}

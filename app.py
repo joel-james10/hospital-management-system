@@ -17,14 +17,14 @@ mail.init_app(app)
 # This import must come after db initialization
 from models import admin, doctor, patient, department, appointment, treatment
 
-# Import routes (temporarily commented out until routes are created)
-# from routes import auth, admin as admin_routes, doctor as doctor_routes, patient as patient_routes
+# Import routes
+from routes import auth, admin as admin_routes, doctor as doctor_routes, patient as patient_routes
 
-# Register blueprints (temporarily commented out)
-# app.register_blueprint(auth.bp)
-# app.register_blueprint(admin_routes.bp)
-# app.register_blueprint(doctor_routes.bp)
-# app.register_blueprint(patient_routes.bp)
+# Register blueprints
+app.register_blueprint(auth.bp)
+app.register_blueprint(admin_routes.bp)
+app.register_blueprint(doctor_routes.bp)
+app.register_blueprint(patient_routes.bp)
 
 # User loader for Flask-Login
 @login_manager.user_loader
@@ -49,8 +49,7 @@ def load_user(user_id):
 @app.route('/')
 def index():
     """Home page - redirect to login"""
-    # Temporarily return a simple message until routes are created
-    return "Hospital Management System - Database Initialized!"
+    return redirect(url_for('auth.login'))
 
 # Error handlers
 @app.errorhandler(404)
