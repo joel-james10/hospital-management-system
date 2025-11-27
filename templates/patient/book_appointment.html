@@ -36,6 +36,18 @@
                             <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Select Date and Time</h5>
                         </div>
                         <div class="card-body">
+                            {% if not availability %}
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    <strong>No Availability Set</strong>
+                                    <p class="mb-0 mt-2">This doctor has not set their availability schedule yet. Please check back later or contact the hospital administration.</p>
+                                </div>
+                                <div class="d-grid">
+                                    <a href="{{ url_for('patient.find_doctors') }}" class="btn btn-primary">
+                                        <i class="bi bi-arrow-left"></i> Back to Find Doctors
+                                    </a>
+                                </div>
+                            {% else %}
                             <form method="POST" action="{{ url_for('patient.book_appointment', doctor_id=doctor.id) }}">
                                 <div class="mb-3">
                                     <label for="date" class="form-label">
@@ -53,7 +65,15 @@
                                     <select class="form-select" id="time" name="time" required>
                                         <option value="">Select a time slot</option>
                                         {% for hour in range(8, 20) %}
-                                        <option value="{{ '%02d:00' % hour }}">{{ '%02d:00' % hour }} ({{ '%02d:00' % hour | datetime_format }})</option>
+                                        <option value="{{ '%02d:00' % hour }}">
+                                            {% if hour < 12 %}
+                                                {{ '%02d:00 AM' % hour }}
+                                            {% elif hour == 12 %}
+                                                12:00 PM
+                                            {% else %}
+                                                {{ '%02d:00 PM' % (hour - 12) }}
+                                            {% endif %}
+                                        </option>
                                         {% endfor %}
                                     </select>
                                     <div class="form-text">Available slots: 8:00 AM - 8:00 PM (1-hour slots)</div>
@@ -79,6 +99,7 @@
                                     </button>
                                 </div>
                             </form>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
