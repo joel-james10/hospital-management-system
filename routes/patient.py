@@ -179,9 +179,13 @@ def book_appointment(doctor_id):
     from models.doctor_availability import DoctorAvailability
     availability = DoctorAvailability.query.filter_by(doctor_id=doctor_id).all()
 
+    # Calculate minimum booking date (1 day in advance)
+    min_date = (datetime.now().date() + timedelta(days=1)).strftime('%Y-%m-%d')
+
     return render_template('patient/book_appointment.html',
                          doctor=doctor,
-                         availability=availability)
+                         availability=availability,
+                         min_date=min_date)
 
 @bp.route('/appointments/cancel/<int:id>')
 @login_required

@@ -54,7 +54,7 @@
                                         Appointment Date <span class="text-danger">*</span>
                                     </label>
                                     <input type="date" class="form-control" id="date" name="date" required
-                                           min="{{ (now().date() + timedelta(days=1)).strftime('%Y-%m-%d') }}">
+                                           min="{{ min_date }}">
                                     <div class="form-text">Select a date (must be at least 1 day in advance)</div>
                                 </div>
 
